@@ -58,3 +58,18 @@ class TestItem(object):
 
         response = requests.request("PUT", url, data=json.dumps(payload), headers=headers)
         assert response.status_code == 200
+
+    def test_item_variant(self):
+        url = staticValues.base_url + '/item/' + staticValues.item_id
+        headers = {
+            'authorization': "",
+            'content-type': "application/json",
+            'token': staticValues.token
+        }
+
+        payload = {
+            "category": "Shorts"
+        }
+
+        response = requests.request("PUT", url, data=json.dumps(payload), headers=headers)
+        assert response.status_code == 200

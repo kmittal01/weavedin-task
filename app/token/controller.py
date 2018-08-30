@@ -7,7 +7,6 @@ from app.extensions import g
 
 def get_token_ctrl(obj):
     user = g.session.query(Users).filter_by(email=obj['email']).one()
-    print "user", user.id
     if hash_password(obj['password']) != user.password:
         abort(403)
     encoded = jwt.encode({'id': str(user.id)}, 'secret', algorithm='HS256')
