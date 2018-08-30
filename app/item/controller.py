@@ -91,7 +91,7 @@ def update_multiple_items_ctrl(obj):
 def get_user_transactions_ctrl(user_id):
     user = g.session.query(Users).filter_by(id=user_id).all()[0]
     transaction_dict = {}
-    transation_notifications = []
+    transaction_notifications = {}
     all_user_transaction = g.session.query(UpdateTransactionLog).filter_by(user_id=user_id).order_by(
         UpdateTransactionLog.transaction_id.desc()).all()
     for transaction in all_user_transaction:
@@ -103,14 +103,25 @@ def get_user_transactions_ctrl(user_id):
         for transaction_part in transaction_dict[transaction_id]:
             event = 'edited' if transaction_part['update_type'] == 'update' else 'inserted'
             if event == 'inserted':
-                print transaction_part['attribute'], user.__dict__, event, transaction_part['entity_type']
                 notification = user.name + ' ' + event + ' ' + transaction_part['entity_type'] + ' with ' + \
                                transaction_part['attribute'] + ' as ' + transaction_part['new_value']
-                transation_notifications.append(notification)
             elif event == 'edited':
                 notification = user.name + ' ' + event + ' ' + transaction_part['entity_type'] + ' with ' + \
                                transaction_part['attribute'] + ' as ' + transaction_part['old_value'] + ' to ' + \
                                transaction_part['new_value']
-                transation_notifications.append(notification)
-    print transation_notifications
-    return transation_notifications
+            if transaction_part["transaction_id"] not in transaction_notifications:
+                transaction_notifications[transaction_part["transaction_id"]] = []
+            transaction_notifications[transaction_part["transaction_id"]].append(notification)
+    # print transaction_notifications
+    return transaction_notifications
+
+
+def get_all_user_transactions_ctrl():
+    user_notifications = {}
+    all_users = g.session.query(Users).all()
+    for user in all_users:
+        user_id = str(user.id)
+        user_notifications[user_id] = get_user_transactions_ctrl(user_id)
+
+    print user_notifications
+    return user_notifications

@@ -147,3 +147,14 @@ class TestItem(object):
 
         response = requests.request("GET", url, headers=headers)
         assert response.status_code == 200
+
+    def test_get_all_user_transactions(self):
+        url = staticValues.base_url + '/user_transactions/'
+        headers = {
+            'authorization': "",
+            'content-type': "application/json",
+            'token': staticValues.token
+        }
+
+        response = requests.request("GET", url, headers=headers)
+        assert response.status_code == 200

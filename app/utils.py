@@ -35,7 +35,6 @@ def create(create_obj):
 def update(updated_object):
     entity = updated_object.__class__
     object_id = updated_object.id
-    print object_id
     g.session.query(entity).filter_by(id=object_id).one()
     serialize_to_json(updated_object)
     updated_object.modified_on = datetime.datetime.now()
