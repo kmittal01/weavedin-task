@@ -36,11 +36,11 @@ def update_multiple_items():
     return jsonify(update_multiple_items_ctrl(request.json))
 
 
-@item_api.route('/user_transactions/<user_id>', methods=['GET'])
-def get_user_transactions(user_id):
-    return jsonify(get_user_transactions_ctrl(user_id))
+@item_api.route('/user_transactions/<user_id>/<start_timestamp>/<end_timestamp>', methods=['GET'])
+def get_user_transactions(user_id,start_timestamp,end_timestamp):
+    return jsonify(get_user_transactions_ctrl(user_id,start_timestamp,end_timestamp))
 
 
-@item_api.route('/user_transactions/', methods=['GET'])
-def get_all_user_transactions():
-    return jsonify(get_all_user_transactions_ctrl())
+@item_api.route('/user_transactions/<start_timestamp>/<end_timestamp>', methods=['GET'])
+def get_all_user_transactions(start_timestamp, end_timestamp):
+    return jsonify(get_all_user_transactions_ctrl(start_timestamp, end_timestamp))

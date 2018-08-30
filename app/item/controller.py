@@ -2,7 +2,7 @@ from models import Item, Variant, UpdateTransactionLog
 from app.user.models import Users
 from app.utils import create, update, serialize_to_json
 from app.extensions import g
-
+from datetime import datetime
 
 def create_item_ctrl(obj):
     item = Item(**obj)
@@ -88,11 +88,14 @@ def update_multiple_items_ctrl(obj):
     return
 
 
-def get_user_transactions_ctrl(user_id):
+def get_user_transactions_ctrl(user_id, start_timestamp, end_timestamp):
+    start_timestamp = datetime.fromtimestamp(float(start_timestamp)).strftime('%Y-%m-%d %H:%M:%S')
+    end_timestamp = datetime.fromtimestamp(float(end_timestamp)).strftime('%Y-%m-%d %H:%M:%S')
     user = g.session.query(Users).filter_by(id=user_id).all()[0]
     transaction_dict = {}
     transaction_notifications = {}
-    all_user_transaction = g.session.query(UpdateTransactionLog).filter_by(user_id=user_id).order_by(
+    all_user_transaction = g.session.query(UpdateTransactionLog).filter_by(user_id=user_id).filter(
+        UpdateTransactionLog.created_at >= start_timestamp, UpdateTransactionLog.created_at <= end_timestamp).order_by(
         UpdateTransactionLog.transaction_id.desc()).all()
     for transaction in all_user_transaction:
         if transaction.transaction_id not in transaction_dict:
@@ -112,16 +115,16 @@ def get_user_transactions_ctrl(user_id):
             if transaction_part["transaction_id"] not in transaction_notifications:
                 transaction_notifications[transaction_part["transaction_id"]] = []
             transaction_notifications[transaction_part["transaction_id"]].append(notification)
-    # print transaction_notifications
+    print transaction_notifications
     return transaction_notifications
 
 
-def get_all_user_transactions_ctrl():
+def get_all_user_transactions_ctrl(start_timestamp, end_timestamp):
     user_notifications = {}
     all_users = g.session.query(Users).all()
     for user in all_users:
         user_id = str(user.id)
-        user_notifications[user_id] = get_user_transactions_ctrl(user_id)
+        user_notifications[user_id] = get_user_transactions_ctrl(user_id, start_timestamp, end_timestamp)
 
     print user_notifications
     return user_notifications

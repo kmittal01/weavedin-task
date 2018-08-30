@@ -1,9 +1,13 @@
 import requests
 import json
 from utils import staticValues, random_string_generator
+import time
 
 
 class TestItem(object):
+    ts = time.time()
+    start_time = ts - 3600
+    end_time = ts + 3600
 
     def test_item_insert(self):
         url = staticValues.base_url + '/item'
@@ -63,7 +67,6 @@ class TestItem(object):
 
         staticValues.variant_id = response.json()['id']
         assert response.status_code == 200
-
 
     def test_variant_insert2(self):
         url = staticValues.base_url + '/item/' + staticValues.item_id2 + "/variant"
@@ -125,12 +128,12 @@ class TestItem(object):
 
         payload = {
             staticValues.item_id: {
-                'attributes':{'category': 'Long Tee'},
-                'variants': {staticValues.variant_id2:{'size': 'XXXS'}}
+                'attributes': {'category': 'Long Tee'},
+                'variants': {staticValues.variant_id2: {'size': 'XXXS'}}
             },
             staticValues.item_id2: {
                 'attributes': {"category": 'Short Tee'},
-                'variants': {staticValues.variant_id2:{'size': 'XXXL'}}
+                'variants': {staticValues.variant_id2: {'size': 'XXXL'}}
             }
         }
 
@@ -138,7 +141,7 @@ class TestItem(object):
         assert response.status_code == 200
 
     def test_get_user_transactions(self):
-        url = staticValues.base_url + '/user_transactions/' + staticValues.user_id
+        url = staticValues.base_url + '/user_transactions/' + staticValues.user_id + '/' + str(self.start_time) + '/' + str(self.end_time)
         headers = {
             'authorization': "",
             'content-type': "application/json",
@@ -149,7 +152,7 @@ class TestItem(object):
         assert response.status_code == 200
 
     def test_get_all_user_transactions(self):
-        url = staticValues.base_url + '/user_transactions/'
+        url = staticValues.base_url + '/user_transactions' + '/' + str(self.start_time) + '/' + str(self.end_time)
         headers = {
             'authorization': "",
             'content-type': "application/json",
