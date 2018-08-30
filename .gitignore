@@ -1,0 +1,11 @@
+*.pyc
+.idea/
+.cache/*
+.DS_Store
+resdis-3.2.9/
+*.cache
+*.sublime*
+redis-3.2.9/tests/
+tests/__pycache__/
+*.docx
+dump.rdb
